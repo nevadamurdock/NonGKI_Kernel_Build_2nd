@@ -1,4 +1,4 @@
-name: Build Redmi 8 (Based-AOSP A15) (Kernel 4.19)
+name: Build Redmi 10 (Based-MiCode A13) (Kernel 4.14)
 
 on:
   workflow_call:
