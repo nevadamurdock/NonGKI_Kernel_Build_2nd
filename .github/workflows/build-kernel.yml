@@ -61,6 +61,13 @@ jobs:
     uses: ./.github/workflows/build-redmi-k20pro-aosp-a15-sovietstaross.yml
     secrets: inherit
 
+  build-redmi-10-selene-414:
+    name: "Redmi 10 (Based-MiCode A13) (Kernel 4.14)"
+    strategy:
+      fail-fast: true
+    uses: ./.github/workflows/build-redmi-10-selene-414.yml
+    secrets: inherit
+
   build-redmi-8-aosp-a15-419:
     name: "Redmi 8 (Based-AOSP A15) (Kernel 4.19)"
     strategy:
