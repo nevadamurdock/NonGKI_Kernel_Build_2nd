@@ -79,13 +79,13 @@ env:
   HIDE_STUFF: "true" # hide some of the features
 
   GENERATE_DTB: "false" # if u kernel need DTB , but cannot auto generate it. (Only Anykernel3).
-  GENERATE_CHIP: "xiaomi-sdm439" # only supported for qcom and mediatek.
+  GENERATE_CHIP: "xiaomi-mt6768" # only supported for qcom and mediatek.
 
   BUILD_DEBUGGER: "false" # Output build errors.
   SKIP_PATCH: "true" # Ignore errors found in Patch Debugger.
 
   BUILD_OTHER_CONFIG: "true" # Merge config files.
-  MERGE_CONFIG_FILES: "vendor/xiaomi-sdm439.config"
+  MERGE_CONFIG_FILES: "vendor/xiaomi-mt6768.config"
 
   FREE_MORE_SPACE: "false" # if u want get more space, enabled it.
 
@@ -129,7 +129,7 @@ jobs:
       - name: 🔒 Patch Kernel of Baseband Guard
         uses: ./.github/workflows/patch-baseband-guard
 
-      - name: ❗ Redmi 8 BBG Only
+      - name: ❗ Redmi 10 BBG Only
         run: |
           # Only ${{ env.DEVICE_NAME }} use it.
           cd $GITHUB_WORKSPACE/device_kernel
