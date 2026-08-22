@@ -15,8 +15,8 @@ env:
   KERNEL_SOURCE : "https://github.com/dereference23/kernel_xiaomi_sm6375.git"
   KERNEL_BRANCH : "main"
 
-  CLANG_SOURCE : "https://github.com/llvm/llvm-project/releases/download/llvmorg-21.1.3/LLVM-21.1.3-Linux-X64.tar.xz"
-  CLANG_BRANCH : ""
+  CLANG_SOURCE : "https://github.com/LineageOS/android_prebuilts_clang_kernel_linux-x86_clang-r416183b.git"
+  CLANG_BRANCH : "lineage-20.0"
 
   GCC_GNU : false
   GCC_64_SOURCE : "https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9.git"
@@ -63,6 +63,8 @@ env:
   SUSFS_PATCH_FIXED: "susfs_fixed_eplus" # Fill in your patches here. If there are multiple patches, please separate them with a comma. Leave it blank if there isn't one. -> patch1,patch2
 
   REKERNEL_ENABLE: "false" # if u need Re:Kernel.
+  DROIDSPACES_ENABLE: "false" # if u need Droidspaces or LXC/Docker.
+  NOMOUNT_ENABLE: "false" # if u need NoMount.
 
   HOOK_METHOD: "syscall" # Manual hook method ->  syscall.
 
@@ -75,8 +77,6 @@ env:
 
   BASEBAND_GUARD_ENABLE: "false" #if u want prevent unauthorized writes to critical partitions/device nodes.
   BASEBAND_GUARD_BOOT: "false" #if u want to protect boot partition.
-
-  HIDE_STUFF: "false" # hide some of the features
 
   GENERATE_DTB: "false" # if u kernel need DTB , but cannot auto generate it. (Only Anykernel3).
   GENERATE_CHIP: "qcom" # only supported for qcom and mediatek.
@@ -120,7 +120,6 @@ jobs:
           # Only ${{ env.DEVICE_NAME }} use it.
           cd $GITHUB_WORKSPACE/device_kernel
 
-
           # enable CONFIG_TMPFS_XATTR
 
           echo "CONFIG_TMPFS_XATTR=y" >> ./arch/${{ env.KERNEL_ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
@@ -128,11 +127,18 @@ jobs:
       - name: 🧰 Patch Kernel of Re:Kernel
         uses: ./.github/workflows/patch-rekernel
 
+      - name: 💿 Patch Kernel of Droidspaces
+        uses: ./.github/workflows/patch-droidspaces
+
       - name: 🔒 Patch Kernel of Baseband Guard
         uses: ./.github/workflows/patch-baseband-guard
 
-      - name: 🔧 Patch Hide Stuff
-        uses: ./.github/workflows/patch-hide-stuff
+      - name: ❌ Set Swap
+        uses: thejerrybao/setup-swap-space@v1
+        with:
+            swap-space-path: /swapfile
+            swap-size-gb: 16
+            remove-existing-swap-files: true
 
       - name: 🚀 Build Process
         uses: ./.github/workflows/build-process

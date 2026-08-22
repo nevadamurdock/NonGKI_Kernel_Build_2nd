@@ -89,6 +89,13 @@ jobs:
     uses: ./.github/workflows/build-redmi-note11pro-5g-aosp-a16.yml
     secrets: inherit
 
+  build-redmi-k30ultra-aosp-a14:
+    name: "Redmi K30 Ultra (Based AOSP A14)"
+    strategy:
+      fail-fast: true
+    uses: ./.github/workflows/build-redmi-k30ultra-aosp-a14.yml
+    secrets: inherit
+
   # Samsung
   build-samsung-note10plus-oneui-a15:
     name: "Samsung Note 10 Plus (OneUI A15)"
@@ -104,18 +111,11 @@ jobs:
     uses: ./.github/workflows/build-samsung-note10-oneui-a15.yml
     secrets: inherit
 
-  build-samsung-a71-aosp-a16:
-    name: "Samsung Galaxy A71 (AOSP A16)"
+  build-samsung-a71-aosp-oneui-a16:
+    name: "Samsung Galaxy A71 (Based AOSP & OneUI A16)"
     strategy:
       fail-fast: true
-    uses: ./.github/workflows/build-samsung-a71-aosp-a16.yml
-    secrets: inherit
-
-  build-samsung-a71-oneui-a16:
-    name: "Samsung Galaxy A71 (OneUI A16)"
-    strategy:
-      fail-fast: true
-    uses: ./.github/workflows/build-samsung-a71-oneui-a16.yml
+    uses: ./.github/workflows/build-samsung-a71-aosp-oneui-a16.yml
     secrets: inherit
 
   # Smartisan
@@ -128,7 +128,7 @@ jobs:
 
   # Nothing
   build-nothing-phone-1-lineageos23-a16:
-    name: "Nothing Phone (1) (LineageOS 23.0 A16)"
+    name: "Nothing Phone (1) (LineageOS 23.2 A16)"
     strategy:
       fail-fast: true
     uses: ./.github/workflows/build-nothing-phone-1-lineageos23-a16.yml

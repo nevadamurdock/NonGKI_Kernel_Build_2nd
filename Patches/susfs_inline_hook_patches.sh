@@ -19,9 +19,10 @@ patch_files=(
     security/selinux/ss/services.c
     kernel/reboot.c
     kernel/sys.c
+    include/linux/seccomp.h
 )
 
-PATCH_LEVEL="2.1.00"
+PATCH_LEVEL="2.2.00"
 KERNEL_VERSION=$(head -n 3 Makefile | grep -E 'VERSION|PATCHLEVEL' | awk '{print $3}' | paste -sd '.')
 FIRST_VERSION=$(echo "$KERNEL_VERSION" | awk -F '.' '{print $1}')
 SECOND_VERSION=$(echo "$KERNEL_VERSION" | awk -F '.' '{print $2}')
@@ -175,7 +176,7 @@ for i in "${patch_files[@]}"; do
     ## input/input.c
     drivers/input/input.c)
         sed -i '/^static void input_handle_event(struct input_dev \*dev,/i\#ifdef CONFIG_KSU\nextern struct static_key_true ksu_is_input_hook_enabled;\nextern int ksu_handle_input_handle_event(unsigned int *type, unsigned int *code, int *value);\n#endif\n' drivers/input/input.c
-        sed -i '/if (disposition != INPUT_IGNORE_EVENT && type != EV_SYN)/i\#ifdef CONFIG_KSU_SUSFS\n\tif (static_branch_unlikely(\&ksu_is_input_hook_enabled))\n\t\tksu_handle_input_handle_event(\&type, \&code, \&value);\n#endif\n' drivers/input/input.c
+        sed -i '/input_get_disposition(dev, type, code, \&value);/a\#ifdef CONFIG_KSU_SUSFS\n\tif (static_branch_unlikely(\&ksu_is_input_hook_enabled))\n\t\tksu_handle_input_handle_event(\&type, \&code, \&value);\n#endif\n' drivers/input/input.c
 
         if grep -q "ksu_handle_input_handle_event" "drivers/input/input.c"; then
             echo "[+] drivers/input/input.c Patched!"
@@ -319,6 +320,28 @@ extern int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd, void 
             fi
         else
             echo "[-] KernelSU have no ksu_handle_setresuid, Skipped."
+        fi
+
+        echo "======================================"
+        ;;
+
+    # include/ changes
+    ## linux/seccomp.h
+    include/linux/seccomp.h)
+        echo "======================================"
+
+        if grep -q "filter_count" "include/linux/seccomp.h" >/dev/null 2>&1; then
+            echo "[-] Detected filter_count in kernel, Skipped."
+        else
+            sed -i '/#include <linux\/thread_info.h>/a\#include <linux\/atomic.h>' include/linux/seccomp.h
+            sed -i '/struct seccomp_filter \*filter;/i\ \tatomic_t filter_count;' include/linux/seccomp.h
+
+            if grep -q "filter_count" "include/linux/seccomp.h"; then
+                echo "[+] include/linux/seccomp.h Patched!"
+                echo "[+] Count: $(grep -c "filter_count" "include/linux/seccomp.h")"
+            else
+                echo "[-] include/linux/seccomp.h patch failed for unknown reasons, please provide feedback in time."
+            fi
         fi
 
         echo "======================================"
