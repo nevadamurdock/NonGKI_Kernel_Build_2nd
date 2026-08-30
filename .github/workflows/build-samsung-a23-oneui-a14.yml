@@ -9,7 +9,7 @@ env:
   DEVICE_NAME : "samsung_a23xq"
   DEVICE_CODENAME : "a23xq"
 
-  CUSTOM_CMDS : "CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-linux-gnu-"
+  CUSTOM_CMDS : "CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-linux-android-"
   EXTRA_CMDS : "LLVM=1 LLVM_IAS=1 CC=clang LD=ld.lld AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip READELF=llvm-readelf HOSTCC=clang HOSTCXX=clang++"
 
   KERNEL_SOURCE : "https://github.com/nevadamurdock/android_kernel_samsung_a23xq.git"
@@ -112,14 +112,14 @@ jobs:
       - name: 🛠 Get aarch64 GCC 4.9 (androidcc-4.9)
         run: |
           cd $GITHUB_WORKSPACE
-          git clone --depth=1 https://github.com/rsuntk/toolchains.git -b androidcc-4.9 google
-          if [ -x google/bin/aarch64-linux-gnu-gcc ]; then
+          git clone --depth=1 https://github.com/rsuplaygrnd/toolchains.git -b androidcc-4.9 google
+          if [ -x google/bin/aarch64-linux-android-ld ]; then
             echo "[+] aarch64 GCC 4.9 found"
           else
             echo "[-] aarch64 GCC 4.9 not found, abort."
             exit 1
           fi
-          echo "GCC_64=CROSS_COMPILE=$GITHUB_WORKSPACE/google/bin/aarch64-linux-gnu-" >> $GITHUB_ENV
+          echo "GCC_64=CROSS_COMPILE=$GITHUB_WORKSPACE/google/bin/aarch64-linux-android-" >> $GITHUB_ENV
 
       - name: ⚙️ Get neccssary tools
         uses: ./.github/workflows/build-ready
@@ -184,7 +184,7 @@ jobs:
           mkdir -p tmp
 
           if [[ "${{ env.AK3_SOURCE }}" =~ "osm0sis" ]]; then
-            sed -i 's|ExampleKernel by osm0sis @ xda-developers|NonGKI Kernel Build by JackAltman @ Github\nGus Kernel Build by AgusGanteng @ Github|g' Anykernel3/anykernel.sh
+            sed -i 's|ExampleKernel by osm0sis @ xda-developers|NonGKI Kernel Build by JackAltman @ Github\nWonderful Kernel Build by nevadamurdock @ Github|g' Anykernel3/anykernel.sh
             sed -i 's/do.devicecheck=1/do.devicecheck=0/g' Anykernel3/anykernel.sh
             sed -i 's!BLOCK=/dev/block/platform/omap/omap_hsmmc.0/by-name/boot;!BLOCK=auto;!g' Anykernel3/anykernel.sh
             sed -i 's/IS_SLOT_DEVICE=0;/is_slot_device=auto;/g' Anykernel3/anykernel.sh
